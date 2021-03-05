@@ -21,7 +21,6 @@ const CoinsScreen = (props) => {
       const request = await axios.get('/tickers');
       setCoins(request.data.data);
       setLoading(false);
-      console.log(request.data.data);
     };
     getData();
   }, []);

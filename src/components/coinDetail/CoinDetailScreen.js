@@ -1,15 +1,26 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, Image, StyleSheet, SectionList} from 'react-native';
+import {
+  Text,
+  View,
+  Image,
+  StyleSheet,
+  SectionList,
+  FlatList,
+} from 'react-native';
 
 import colors from 'cryptoTracker/src/res/Colors.js';
+import axios from '../../libs/Http';
+import CoinMarketItem from './CoinMarketItem';
 
 const CoinDetailScreen = (props) => {
   const [coin, setCoin] = useState([]);
+  const [markets, setMarkets] = useState([]);
 
   useEffect(() => {
     const {coin} = props.route.params;
     props.navigation.setOptions({title: coin.symbol});
     setCoin(coin);
+    getMarkets(coin.id);
   }, [props]);
 
   const getSymbolImg = (name) => {
@@ -20,8 +31,20 @@ const CoinDetailScreen = (props) => {
     }
   };
 
+  const getMarkets = async (coinId) => {
+    if (coinId) {
+      const url = `/coin/markets/?id=${coinId}`;
+      const dataMarkets = await axios.get(url);
+      setMarkets(dataMarkets.data);
+    }
+  };
+
   const getSections = (coin) => {
     const sections = [
+      {
+        title: 'Price Usd',
+        data: [coin.price_usd],
+      },
       {
         title: 'Market Cap',
         data: [coin.market_cap_usd],
@@ -45,6 +68,7 @@ const CoinDetailScreen = (props) => {
         <Text style={styles.titleText}>{coin.name}</Text>
       </View>
       <SectionList
+        style={styles.section}
         sections={getSections(coin)}
         keyExtractor={(item) => item}
         renderItem={({item}) => (
@@ -57,6 +81,14 @@ const CoinDetailScreen = (props) => {
             <Text style={styles.sectionText}>{section.title}</Text>
           </View>
         )}
+      />
+      <Text style={styles.marketTitle}>Markets</Text>
+      <FlatList
+        style={styles.list}
+        keyExtractor={(item, index) => index.toString()}
+        horizontal={true}
+        data={markets}
+        renderItem={({item}) => <CoinMarketItem item={item} />}
       />
     </View>
   );
@@ -83,6 +115,12 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
   },
+  list: {
+    maxHeight: 100,
+  },
+  section: {
+    maxHeight: 290,
+  },
   sectionItem: {
     padding: 8,
     alignItems: 'center',
@@ -100,6 +138,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  marketTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+    backgroundColor: '#184973',
+    padding: 6,
   },
 });
 
