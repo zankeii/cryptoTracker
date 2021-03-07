@@ -10,16 +10,19 @@ import {
 import axios from '../../libs/Http';
 import CoinsItem from './CoinsItem';
 import colors from '../../res/Colors';
+import CoinsSearch from './CoinsSearch';
 
 const CoinsScreen = (props) => {
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filteredCoins, setFilteredCoins] = useState([]);
 
   useEffect(() => {
     setLoading(true);
     const getData = async () => {
       const request = await axios.get('/tickers');
       setCoins(request.data.data);
+      setFilteredCoins(request.data.data);
       setLoading(false);
     };
     getData();
@@ -29,8 +32,19 @@ const CoinsScreen = (props) => {
     props.navigation.navigate('CoinDetail', {coin});
   };
 
+  const handleSearch = (query) => {
+    const filter = filteredCoins.filter((coin) => {
+      return (
+        coin.name.toLowerCase().includes(query.toLowerCase()) ||
+        coin.symbol.toLowerCase().includes(query.toLowerCase())
+      );
+    });
+    setCoins(filter);
+  };
+
   return (
     <View style={styles.container}>
+      <CoinsSearch onChange={handleSearch} />
       {loading ? (
         <ActivityIndicator style={styles.loader} color="white" size="large" />
       ) : null}
