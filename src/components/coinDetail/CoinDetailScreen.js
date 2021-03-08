@@ -8,7 +8,7 @@ import {
   FlatList,
 } from 'react-native';
 
-import colors from 'cryptoTracker/src/res/Colors.js';
+import colors from '../../res/Colors';
 import axios from '../../libs/Http';
 import CoinMarketItem from './CoinMarketItem';
 
