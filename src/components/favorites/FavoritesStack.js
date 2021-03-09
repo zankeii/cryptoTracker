@@ -2,7 +2,7 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import FavoritesScreen from './FavoritesScreen';
-import colors from "../../res/Colors";
+import colors from '../../res/Colors';
 
 const Stack = createStackNavigator();
 
@@ -19,8 +19,7 @@ const FavoritesStack = () => {
           textAlign: 'center',
           fontWeight: 'bold',
         },
-      }}
-    >
+      }}>
       <Stack.Screen name="Favorites" component={FavoritesScreen} />
     </Stack.Navigator>
   );
